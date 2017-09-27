@@ -1,1 +1,10 @@
-0,15,30,45 * * * * /usr/bin/sh /opt/backups/scripts/evolved.sh
+
+if no default config is set 
+0,15,30,45 * * * * /usr/bin/sh /Path/TO/script/backup.sh -f /Path/TO/config/backup.conf
+
+if default config is set 
+0,15,30,45 * * * * /usr/bin/sh /Path/TO/script/backup.sh
+
+if you want to backup 1 server
+0,15,30,45 * * * * /usr/bin/sh /Path/TO/script/backup.sh -u <user> -s <server>
+
