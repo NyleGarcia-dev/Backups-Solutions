@@ -1,10 +1,37 @@
 #!/bin/bash
 DEFAULTBACKUPFILE=/opt/backups/scripts/backup.conf
 DEBUGGING=0
+RETAIN_NUM_LINES=100000
+LOGFILE=backuplog.txt 
 #DEBUGGING=(0/1/2) 
 # 0 being no logging
 # 1 being some logging
 # 2 being log everything
+
+function logsetup {  
+    TMP=$(tail -n $RETAIN_NUM_LINES $LOGFILE 2>/dev/null) && echo "${TMP}" > $LOGFILE
+    exec > >(tee -a $LOGFILE)
+    exec 2>&1
+}
+function log {  
+    echo "[$(date --rfc-3339=seconds)]: $*"
+}
+
+logsetup
+
+
+startbk(){
+  	echo "_+=------------------------------------=+_" 	
+	echo "Starting Backup: " $t0	
+	echo "Sending tmux commands to $SERVER server!"
+	sudo -u $USER tmux send-keys -t $SERVER "say Starting Server Backup" ENTER
+}
+endbk(){
+	sudo -u $USER tmux send-keys -t $SERVER "say Server Backup Complete" ENTER
+	echo "Backup Complete: `date`"	
+	echo "_+=------------------------------------=+_"
+
+}
 saveall(){
 	echo "Sending save-all command to tmux session"
 	sudo -u $USER tmux send-keys -t $SERVER "save-all" ENTER
@@ -32,44 +59,14 @@ prune(){
 	sudo -u $USER borg prune   -d 1 -w 1 -m 1 -y 1 --keep-within=1d /opt/backups/$SERVER
 }
 backup(){
-case "${DEBUGGING}"
-  in
-  0) 
-  	echo "_+=------------------------------------=+_" 	
-	echo "Starting Backup: " $t0	
-	echo "Sending tmux commands to $SERVER server!"
-	sudo -u $USER tmux send-keys -t $SERVER "say Starting Server Backup" ENTER
-	saveall()
-	saveoff()
-	runbackup()
-	saveon()
-	prune()
-	sudo -u $USER tmux send-keys -t $SERVER "say Server Backup Complete" ENTER
-
-	echo "Backup Complete: `date`"	
-	echo "_+=------------------------------------=+_"
-  ;;
-  
-
-  1) USER=${OPTARG:-"0"}
-  	echo "_+=------------------------------------=+_" >> backuplog.txt	
-	echo "Starting Backup: " $t0 >> backuplog.txt	
-	echo "Sending tmux commands to $SERVER server!"
-	sudo -u $USER tmux send-keys -t $SERVER "say Starting Server Backup" ENTER
-	saveall()
-	saveoff()
-	runbackup()
-	saveon()
-	prune()
-	sudo -u $USER tmux send-keys -t $SERVER "say Server Backup Complete" ENTER
-
-	echo "Backup Complete: `date`" >> backuplog.txt	
-	echo "_+=------------------------------------=+_" >> backuplog.txt	
-	
-
-  ;;
-  2) echo "Not implemented yet";;
- esac
+ 
+if [DEBUGGING > 0]; then log startbk() else startbk() fi
+if [DEBUGGING > 1]; then log saveall() else saveall() fi
+if [DEBUGGING > 1]; then log saveoff() else saveoff() fi
+if [DEBUGGING > 1]; then log runbackup() else runbackup() fi
+if [DEBUGGING > 1]; then log saveon() else saveon() fi
+if [DEBUGGING > 1]; then log prune() else prune() fi
+if [DEBUGGING > 0]; then log endbk() else endbk() fi
 
 
 }
