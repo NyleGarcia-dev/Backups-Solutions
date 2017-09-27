@@ -3,7 +3,7 @@ DEFAULTBACKUPFILE=/opt/backups/scripts/backup.conf
 DEBUGGING=0
 RETAIN_NUM_LINES=100000
 LOGFILE=backuplog.txt
-#rm -f backuplog.txt 
+rm -f backuplog.txt 
 #DEBUGGING=(0/1/2) 
 # 0 being no logging
 # 1 being some logging
@@ -61,13 +61,30 @@ prune(){
 }
 backup(){
  
-if [DEBUGGING > 0]; then log startbk else startbk fi
-if [DEBUGGING > 1]; then log saveall else saveall fi
-if [DEBUGGING > 1]; then log saveoff else saveoff fi
-if [DEBUGGING > 1]; then log runbackup else runbackup fi
-if [DEBUGGING > 1]; then log saveon else saveon fi
-if [DEBUGGING > 1]; then log prune else prune fi
-if [DEBUGGING > 0]; then log endbk else endbk fi
+if [DEBUGGING > 0]; then 
+log startbk 
+else 
+startbk 
+fi
+if [DEBUGGING > 1]; then 
+log saveall 
+log saveoff
+log runbackup 
+log saveon
+log prune
+
+else 
+ saveall 
+ saveoff
+ runbackup 
+ saveon
+ prune 
+fi
+if [DEBUGGING > 0]; then 
+log endbk 
+else 
+endbk 
+fi
 
 
 }
@@ -83,17 +100,14 @@ do
 done
 
 if [$SERVER == "0" && $USER == "0"]; then
-	for args in ($fname)
+	for args in $fname
 	do		
-		IFS=$' '       # make space the only separator
-		for j in $(args)    
-		do
-			SERVER=$j
-			USER=$j
-		done
-		backup()
-			
+		if [$debugging == 2]; then
+			./backup.sh "${args}" >> backuplog.txt			
+		else	
+			./backup.sh "${args}"			
+		fi			
 	done
 else
-	backup()
+backup()
 fi
