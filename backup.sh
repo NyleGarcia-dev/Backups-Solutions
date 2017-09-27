@@ -62,12 +62,12 @@ prune(){
 }
 backup(){
  
-if [DEBUGGING > 0]; then 
+if [$DEBUGGING > 0]; then 
 log startbk 
 else 
 startbk 
 fi
-if [DEBUGGING > 1]; then 
+if [$DEBUGGING > 1]; then 
 log saveall 
 log saveoff
 log runbackup 
@@ -81,7 +81,7 @@ else
  saveon
  prune 
 fi
-if [DEBUGGING > 0]; 
+if [$DEBUGGING > 0]; 
 then 
 log endbk 
 else 
@@ -104,7 +104,7 @@ done
 if [$SERVER == "0" && $USER == "0"]; then
 	for args in $fname
 	do		
-		if [$debugging == 2]; then
+		if [$DEBUGGING == 2]; then
 			./backup.sh "${args}" >> backuplog.txt			
 		else	
 			./backup.sh "${args}"			
