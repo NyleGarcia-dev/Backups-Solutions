@@ -61,13 +61,13 @@ prune(){
 }
 backup(){
  
-if [DEBUGGING > 0]; then log startbk() else startbk() fi
-if [DEBUGGING > 1]; then log saveall() else saveall() fi
-if [DEBUGGING > 1]; then log saveoff() else saveoff() fi
-if [DEBUGGING > 1]; then log runbackup() else runbackup() fi
-if [DEBUGGING > 1]; then log saveon() else saveon() fi
-if [DEBUGGING > 1]; then log prune() else prune() fi
-if [DEBUGGING > 0]; then log endbk() else endbk() fi
+if [DEBUGGING > 0]; then log startbk else startbk fi
+if [DEBUGGING > 1]; then log saveall else saveall fi
+if [DEBUGGING > 1]; then log saveoff else saveoff fi
+if [DEBUGGING > 1]; then log runbackup else runbackup fi
+if [DEBUGGING > 1]; then log saveon else saveon fi
+if [DEBUGGING > 1]; then log prune else prune fi
+if [DEBUGGING > 0]; then log endbk else endbk fi
 
 
 }
