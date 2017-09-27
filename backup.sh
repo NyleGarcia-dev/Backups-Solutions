@@ -4,18 +4,17 @@ DEBUGGING=0
 RETAIN_NUM_LINES=100000
 LOGFILE=backuplog.txt
 #rm -f backuplog.txt 
-
 #DEBUGGING=(0/1/2) 
 # 0 being no logging
 # 1 being some logging
 # 2 being log everything
 
-function logsetup {  
+logsetup() {  
     TMP=$(tail -n $RETAIN_NUM_LINES $LOGFILE 2>/dev/null) && echo "${TMP}" > $LOGFILE
     exec > >(tee -a $LOGFILE)
     exec 2>&1
 }
-function log {  
+ log() {  
     echo "[$(date --rfc-3339=seconds)]: $*"
 }
 
