@@ -80,7 +80,8 @@ else
  saveon
  prune 
 fi
-if [DEBUGGING > 0]; then 
+if [DEBUGGING > 0]; 
+then 
 log endbk 
 else 
 endbk 
