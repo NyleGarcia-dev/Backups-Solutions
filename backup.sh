@@ -3,7 +3,7 @@ DEFAULTBACKUPFILE=/opt/backups/scripts/backup.conf
 DEBUGGING=0
 RETAIN_NUM_LINES=100000
 LOGFILE=backuplog.txt
-rm -f backuplog.txt 
+#rm -f backuplog.txt 
 #DEBUGGING=(0/1/2) 
 # 0 being no logging
 # 1 being some logging
@@ -109,5 +109,5 @@ if [$SERVER == "0" && $USER == "0"]; then
 		fi			
 	done
 else
-backup()
+backup
 fi
