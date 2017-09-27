@@ -1,5 +1,6 @@
 #!/bin/bash
 DEFAULTBACKUPFILE=/opt/backups/scripts/backup.conf
+t0=`date +%FT%H%M%S`;
 DEBUGGING=0
 RETAIN_NUM_LINES=100000
 LOGFILE=backuplog.txt
