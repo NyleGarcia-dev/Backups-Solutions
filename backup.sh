@@ -1,15 +1,15 @@
 #!/bin/bash
 DEFAULTBACKUPFILE=/opt/backups/scripts/backup.conf
-debugging=0
-#Debugging=(0/1/2) 
+DEBUGGING=0
+#DEBUGGING=(0/1) 
 # 0 being no logging
 # 1 being some logging
-# 2 being log everything
+
 
 
 backup(){
 
-if [$debugging == 0]; then
+if [$DEBUGGING == 0]; then
 	echo "_+=------------------------------------=+_"
 	echo "Starting Backup: " $t0
 	echo "Sending tmux commands to $SERVER server!"
@@ -32,7 +32,7 @@ if [$debugging == 0]; then
 	echo "_+=------------------------------------=+_"
 fi
 
-if [$debugging == 1]; then
+if [$DEBUGGING == 1]; then
 	echo "_+=------------------------------------=+_" >> backuplog.txt	
 	echo "Starting Backup: " $t0 >> backuplog.txt	
 	echo "Sending tmux commands to $SERVER server!"
@@ -69,11 +69,14 @@ done
 if [$SERVER == "0" && $USER == "0"]; then
 	for args in ($fname)
 	do		
-		if [$debugging == 2]; then
-			./backup.sh "${args}" >> backuplog.txt			
-		else	
-			./backup.sh "${args}"			
-		fi			
+		IFS=$' '       # make space the only separator
+		for j in $(args)    
+		do
+			SERVER=$j
+			USER=$j
+		done
+		backup()
+			
 	done
 else
 	backup()
