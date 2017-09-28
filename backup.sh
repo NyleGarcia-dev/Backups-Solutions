@@ -62,18 +62,20 @@ prune(){
 }
 backup(){
  
-if [$DEBUGGING > 0]; then 
+if [$DEBUGGING -gt 0]; 
+then 
 log startbk 
 else 
 startbk 
 fi
-if [$DEBUGGING > 1]; then 
+
+if [$DEBUGGING -gt 1]; 
+then 
 log saveall 
 log saveoff
 log runbackup 
 log saveon
 log prune
-
 else 
  saveall 
  saveoff
@@ -81,7 +83,8 @@ else
  saveon
  prune 
 fi
-if [$DEBUGGING > 0]; 
+
+if [$DEBUGGING -gt 0]; 
 then 
 log endbk 
 else 
@@ -101,15 +104,18 @@ do
  esac
 done
 
-if [$SERVER == "0" && $USER == "0"]; then
+if [ "${SERVER}" = "0"] && [ "${USER}" = "0"]; 
+then
 	for args in $fname
 	do		
-		if [$DEBUGGING == 2]; then
+		if [$DEBUGGING -eq "2"]; 
+		then
 			./backup.sh "${args}" >> backuplog.txt			
 		else	
 			./backup.sh "${args}"			
 		fi			
 	done
 else
-backup
+	backup
+	
 fi
