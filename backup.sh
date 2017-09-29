@@ -7,10 +7,7 @@ DEBUGGING=0
 RETAIN_NUM_LINES=3100
 LOGFILE=backuplog.txt
 #rm -f backup.txt 
-#DEBUGGING=(0/1/2) 
-# 0  no ging
-# 1  some ging
-# 2   everything
+
 
 
 
@@ -68,37 +65,13 @@ prune(){
 backup(){
 
 	dircheck
-	 
-	if [ $DEBUGGING -gt 0 ]; 
-	then 
-		 startbk 
-	else 
-		startbk 
-	fi
-
-	if [ $DEBUGGING -gt 1 ]; 
-	then 
-		 saveall 
-		 saveoff
-		 runbackup 
-		 saveon
-		 prune
-	else 
-		saveall 
-		saveoff
-		runbackup 
-		saveon
-		prune 
-	fi
-
-	if [ $DEBUGGING -gt 0 ]; 
-	then 
-		 endbk 
-	else 
-		endbk 
-	fi
-
-
+	startbk 
+	saveall 
+	saveoff
+	runbackup 
+	saveon
+	prune
+	endbk 
 }
 
 
