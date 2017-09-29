@@ -6,22 +6,15 @@ t0=`date +%FT%H%M%S`;
 DEBUGGING=0
 RETAIN_NUM_LINES=3100
 LOGFILE=backuplog.txt
-#rm -f backuplog.txt 
+#rm -f backup.txt 
 #DEBUGGING=(0/1/2) 
-# 0  no logging
-# 1  some logging
-# 2  log everything
+# 0  no ging
+# 1  some ging
+# 2   everything
 
 
 
-logsetup() {  
-    TMP=$(tail -n $RETAIN_NUM_LINES $LOGFILE 2>/dev/null) && echo "${TMP}" > $LOGFILE
-    exec > >(tee -a $LOGFILE)
-    exec 2>&1
-}
-log() {  
-    echo "[$(date --rfc-3339=seconds)]: $*"
-}
+
 dircheck(){
 	if [ -d "/opt/backups/$SERVER/$SERVER" ]; 
 		then 
@@ -78,18 +71,18 @@ backup(){
 	 
 	if [ $DEBUGGING -gt 0 ]; 
 	then 
-		log startbk 
+		 startbk 
 	else 
 		startbk 
 	fi
 
 	if [ $DEBUGGING -gt 1 ]; 
 	then 
-		log saveall 
-		log saveoff
-		log runbackup 
-		log saveon
-		log prune
+		 saveall 
+		 saveoff
+		 runbackup 
+		 saveon
+		 prune
 	else 
 		saveall 
 		saveoff
@@ -100,14 +93,14 @@ backup(){
 
 	if [ $DEBUGGING -gt 0 ]; 
 	then 
-		log endbk 
+		 endbk 
 	else 
 		endbk 
 	fi
 
 
 }
-logsetup
+
 
 while getopts s:u:f: option
 do
@@ -119,7 +112,7 @@ do
  esac
 done
 
-echo "  $SERVER - - - $USER  ---- $fname "
+
 
 
 if [[ $SERVER = "0" ]]; 
@@ -132,7 +125,6 @@ echo "  $SERVER - - - $USER  ---- $fname "
 		
 		for i in ${myarray[@]};
 		do 
-			echo $i
 			if [[ $i = "-u" ]]; 
 			then
 				USER=${myarray[ index + 1 ]}
@@ -147,7 +139,7 @@ echo "  $SERVER - - - $USER  ---- $fname "
 			index=$((index+1))
 		done
 		
-		echo "changed   $SERVER - - - $USER  ---- $fname "
+		echo "Backing up -u $USER -s $SERVER "
 		backup
 		
 	done <${fname}
