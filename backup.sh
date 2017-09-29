@@ -13,12 +13,25 @@ LOGFILE=backuplog.txt
 
 
 dircheck(){
-	if [ -d "/opt/backups/$SERVER/$SERVER" ]; 
+
+	if [ -d "/opt/backups/$SERVER" ]; 
 		then 
-			echo ""
-		else 
-			borgint	
+		
+			if [ -d "/opt/backups/$SERVER/$SERVER" ]; 
+			then 
+				echo ""
+			else 
+				
+				borgint	
 	fi
+			
+			
+		else 
+			sudo -u $USER mkdir /opt/backups/$SERVER
+	fi
+
+
+	
 }
 borgint(){
 	sudo -u $USER borg init --encryption=none /opt/backups/$SERVER/$SERVER
