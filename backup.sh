@@ -21,7 +21,7 @@ dircheck(){
 			then 
 				echo ""
 			else 
-				
+				sudo -u $USER mkdir /opt/backups/$SERVER/$SERVER
 				borgint	
 	fi
 			
