@@ -22,7 +22,7 @@ logsetup() {
 logsetup
 
 dircheck(){
-if [ -d "/opt/backups/$SERVER/$SERVER" ]; then
+if [ -d "/opt/backups/$SERVER/$SERVER" ]; 
     then 
 		echo ""
     else 
@@ -38,7 +38,7 @@ fi
 borgint(){
 
 
-sudo -u minecraft borg initi /opt/backups/$SERVER/$SERVER
+sudo -u $USER borg init --encryption=none /opt/backups/$SERVER/$SERVER
 t0="Firstrun"
 
 
