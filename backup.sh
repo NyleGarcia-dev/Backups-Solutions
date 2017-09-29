@@ -21,6 +21,30 @@ logsetup() {
 
 logsetup
 
+dircheck(){
+if [ -d "/opt/backups/$SERVER/$SERVER" ]; then
+    then 
+		echo ""
+    else 
+		borgint	
+fi
+
+}
+
+
+
+
+
+borgint(){
+
+
+sudo -u minecraft borg initi /opt/backups/$SERVER/$SERVER
+t0="Firstrun"
+
+
+}
+
+
 
 startbk(){
   	echo "_+=------------------------------------=+_" 	
@@ -61,6 +85,8 @@ prune(){
 	sudo -u $USER borg prune   -d 1 -w 1 -m 1 -y 1 --keep-within=1d /opt/backups/$SERVER/$SERVER
 }
 backup(){
+
+dircheck
  
 if [ $DEBUGGING -gt 0 ]; 
 then 
@@ -93,6 +119,7 @@ fi
 
 
 }
+
 
 while getopts s:u:f: option
 do
