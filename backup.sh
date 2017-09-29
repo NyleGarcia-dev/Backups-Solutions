@@ -2,13 +2,13 @@
 DEFAULTBACKUPFILE=/opt/backups/scripts/backup.conf
 t0=`date +%FT%H%M%S`;
 DEBUGGING=0
-RETAIN_NUM_LINES=100000
+RETAIN_NUM_LINES=3100
 LOGFILE=backuplog.txt
 #rm -f backuplog.txt 
 #DEBUGGING=(0/1/2) 
-# 0 being no logging
-# 1 being some logging
-# 2 being log everything
+# 0  no logging
+# 1  some logging
+# 2  log everything
 
 logsetup() {  
     TMP=$(tail -n $RETAIN_NUM_LINES $LOGFILE 2>/dev/null) && echo "${TMP}" > $LOGFILE
@@ -58,37 +58,37 @@ prune(){
 	echo "Running prune job to keep space available"
 	# Keep all backups in the last 10 days, 4 additional end of week archives,
 	# and an end of month archive for every month:
-	sudo -u $USER borg prune   -d 1 -w 1 -m 1 -y 1 --keep-within=1d /opt/backups/$SERVER
+	sudo -u $USER borg prune   -d 1 -w 1 -m 1 -y 1 --keep-within=1d /opt/backups/$SERVER/$SERVER
 }
 backup(){
  
-if [$DEBUGGING -gt 0]; 
+if [ $DEBUGGING -gt 0 ]; 
 then 
-log startbk 
+	log startbk 
 else 
-startbk 
+	startbk 
 fi
 
-if [$DEBUGGING -gt 1]; 
+if [ $DEBUGGING -gt 1 ]; 
 then 
-log saveall 
-log saveoff
-log runbackup 
-log saveon
-log prune
+	log saveall 
+	log saveoff
+	log runbackup 
+	log saveon
+	log prune
 else 
- saveall 
- saveoff
- runbackup 
- saveon
- prune 
+	saveall 
+	saveoff
+	runbackup 
+	saveon
+	prune 
 fi
 
-if [$DEBUGGING -gt 0]; 
+if [ $DEBUGGING -gt 0 ]; 
 then 
-log endbk 
+	log endbk 
 else 
-endbk 
+	endbk 
 fi
 
 
@@ -104,11 +104,11 @@ do
  esac
 done
 
-if [ "${SERVER}" = "0"] && [ "${USER}" = "0"]; 
+if [ $SERVER = "0" ] && [ $USER = "0" ]; 
 then
 	for args in $fname
 	do		
-		if [$DEBUGGING -eq "2"]; 
+		if [ $DEBUGGING -eq "2" ]; 
 		then
 			./backup.sh "${args}" >> backuplog.txt			
 		else	
@@ -119,3 +119,4 @@ else
 	backup
 	
 fi
+echo " "
