@@ -73,7 +73,7 @@ prune(){
 	echo "Running prune job to keep space available"
 	# Keep all backups in the last 10 days, 4 additional end of week archives,
 	# and an end of month archive for every month:
-	sudo -u $USER borg prune   -d 1 -w 1 -m 1 -y 1 --keep-within=1d /opt/backups/$SERVER/$SERVER
+	sudo -u $USER borg prune -v --list --keep-within=1d   --keep-daily=7 --keep-weekly=4  --keep-monthly=1 /opt/backups/$SERVER/$SERVER
 }
 backup(){
 
