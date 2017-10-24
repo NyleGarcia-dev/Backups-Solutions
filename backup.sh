@@ -10,8 +10,8 @@ dircheck(){
 
 	if [ -d "$Backupdir" ]; 
 		then 
-		 echo "repo found"
 		 
+		 echo "repo found"
 		else
 			 mkdir -p $Backupdir
 			 borgint
