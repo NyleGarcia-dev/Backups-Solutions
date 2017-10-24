@@ -10,7 +10,7 @@ dircheck(){
 
 	if [ -d "$Backupdir" ]; 
 		then 
-		else 
+		 
 			 mkdir -p $Backupdir
 			 borgint
 	fi
