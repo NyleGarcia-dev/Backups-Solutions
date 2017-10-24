@@ -1,7 +1,7 @@
 #!/bin/bash
 Backupdir=""
 Source=""
-t0=`date +%FT%H%M%S`;
+
 bktime=1m
 
 
@@ -71,7 +71,7 @@ done
 
 while :
 do
-
+t0=`date +%FT%H%M%S`;
 
 backup
 echo "  "
