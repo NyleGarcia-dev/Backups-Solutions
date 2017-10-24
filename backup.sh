@@ -55,27 +55,27 @@ backup(){
 }
 
 
-while getopts s:u: option
+while getopts s:d: option
 do
  case "${option}"
   in
   s) Source=${OPTARG:-"0"};;
   d) Backupdir=${OPTARG:-""};;
- esac
+ esac 
+
+ 
 done
 
 
 while :
 do
+
+
 backup
+echo "  "
+echo "  "
+echo "  "
 sleep $bktime
 done
 
 
-
-backup
-	
-
-echo "  "
-echo "  "
-echo "  "
