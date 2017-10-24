@@ -10,7 +10,7 @@ dircheck(){
 
 	if [ -d "$Backupdir" ]; 
 		then 
-		 
+		 echo "repo found"
 		 
 		else
 			 mkdir -p $Backupdir
