@@ -5,7 +5,7 @@ fname=./backup.conf
 t0=`date +%FT%H%M%S`;
 DEBUGGING=0
 RETAIN_NUM_LINES=3100
-LOGFILE=backuplog.txt
+
 #rm -f backup.txt 
 
 
@@ -13,7 +13,7 @@ dircheck(){
 
 	if [ -d "/opt/backups/$SERVER" ]; 
 		then
-
+		echo Dir found
 		else 
 			sudo -u $USER mkdir -p /opt/backups/$SERVER
 			borgint
@@ -66,14 +66,14 @@ prune(){
 }
 backup(){
 
-	dircheck
-	startbk 
-	saveall 
-	saveoff
-	runbackup 
-	saveon
-	prune
-	endbk 
+	dircheck >> /opt/backups/$SERVER/backup.log
+	startbk >> /opt/backups/$SERVER/backup.log
+	saveall >> /opt/backups/$SERVER/backup.log
+	saveoff >> /opt/backups/$SERVER/backup.log
+	runbackup >> /opt/backups/$SERVER/backup.log
+	saveon >> /opt/backups/$SERVER/backup.log
+	prune >> /opt/backups/$SERVER/backup.log
+	endbk >> /opt/backups/$SERVER/backup.log
 }
 
 
