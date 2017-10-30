@@ -1,11 +1,11 @@
 #!/bin/bash
 SERVER="0"
 USER="minecraft"
-fname=./backup.conf
+fname=/opt/backup.conf
 t0=`date +%FT%H%M%S`;
 DEBUGGING=0
 RETAIN_NUM_LINES=3100
-
+LOGFILE=backuplog.txt
 #rm -f backup.txt 
 
 
@@ -13,9 +13,9 @@ dircheck(){
 
 	if [ -d "/opt/backups/$SERVER" ]; 
 		then
-		echo Dir found  >> /opt/backups/$SERVER/backup.log
+			echo dir found
 		else 
-			sudo -u $USER mkdir -p /opt/backups/$SERVER >> /opt/backups/$SERVER/backup.log
+			sudo -u $USER mkdir -p /opt/backups/$SERVER/$SERVER
 			borgint
 	fi
 
@@ -23,56 +23,56 @@ dircheck(){
 	
 }
 borgint(){
-	sudo -u $USER borg init --encryption=none /opt/backups/$SERVER/$SERVER >> /opt/backups/$SERVER/backup.log
+	sudo -u $USER borg init --encryption=none /opt/backups/$SERVER/$SERVER
 	t0="Firstrun"
 }
 startbk(){
-  	echo "_+=------------------------------------=+_" 	 >> /opt/backups/$SERVER/backup.log
-	echo "Starting Backup: " $t0	 >> /opt/backups/$SERVER/backup.log
-	echo "Sending tmux commands to $SERVER server!" >> /opt/backups/$SERVER/backup.log
-	sudo -u $USER tmux send-keys -t $SERVER "say Starting Server Backup" ENTER >> /opt/backups/$SERVER/backup.log
+  	echo "_+=------------------------------------=+_" 	
+	echo "Starting Backup: " $t0	
+	echo "Sending tmux commands to $SERVER server!"
+	sudo -u $USER tmux send-keys -t $SERVER "say Starting Server Backup" ENTER
 }
 endbk(){
-	sudo -u $USER tmux send-keys -t $SERVER "say Server Backup Complete" ENTER >> /opt/backups/$SERVER/backup.log
-	echo "Backup Complete: `date`"	 >> /opt/backups/$SERVER/backup.log
-	echo "_+=------------------------------------=+_" >> /opt/backups/$SERVER/backup.log
+	sudo -u $USER tmux send-keys -t $SERVER "say Server Backup Complete" ENTER
+	echo "Backup Complete: `date`"	
+	echo "_+=------------------------------------=+_"
 
 }
 saveall(){
-	echo "Sending save-all command to tmux session" >> /opt/backups/$SERVER/backup.log
-	sudo -u $USER tmux send-keys -t $SERVER "save-all" ENTER >> /opt/backups/$SERVER/backup.log
+	echo "Sending save-all command to tmux session"
+	sudo -u $USER tmux send-keys -t $SERVER "save-all" ENTER
 
 }
 saveoff(){
-	echo "Turning world save off for backup" >> /opt/backups/$SERVER/backup.log
-	sudo -u $USER tmux send-keys -t $SERVER "save-off" ENTER >> /opt/backups/$SERVER/backup.log
+	echo "Turning world save off for backup"
+	sudo -u $USER tmux send-keys -t $SERVER "save-off" ENTER
 
 }
 runbackup(){
-	echo "Running backup as user[ $USER ] on server [ $SERVER ] ..." >> /opt/backups/$SERVER/backup.log
+	echo "Running backup as user[ $USER ] on server [ $SERVER ] ..."
 	#Making incremental backup using attic
-	sudo -u $USER borg create -v --stats /opt/backups/$SERVER/$SERVER::$t0 /opt/$SERVER  >> /opt/backups/$SERVER/backup.log
+	sudo -u $USER borg create -v --stats /opt/backups/$SERVER/$SERVER::$t0 /opt/$SERVER 
 
 }
 saveon(){
-	echo "Turning world save back on " >> /opt/backups/$SERVER/backup.log
-	sudo -u $USER tmux send-keys -t $SERVER "save-on" ENTER >> /opt/backups/$SERVER/backup.log 
+	echo "Turning world save back on "
+	sudo -u $USER tmux send-keys -t $SERVER "save-on" ENTER
 }
 prune(){
-	echo "Running prune job to keep space available" >> /opt/backups/$SERVER/backup.log
+	echo "Running prune job to keep space available"
 	# Keep all backups in the last 10 days, 4 additional end of week archives,
 	# and an end of month archive for every month:
-	sudo -u $USER borg prune -v --list --keep-within=1d   --keep-daily=7 --keep-weekly=4  --keep-monthly=1 /opt/backups/$SERVER/$SERVER >> /opt/backups/$SERVER/backup.log
+	sudo -u $USER borg prune -v --list --keep-within=1d   --keep-daily=7 --keep-weekly=4  --keep-monthly=1 /opt/backups/$SERVER/$SERVER
 }
 backup(){
 
-	dircheck 
+	dircheck
 	startbk 
 	saveall 
-	saveoff 
+	saveoff
 	runbackup 
-	saveon 
-	prune 
+	saveon
+	prune
 	endbk 
 }
 
