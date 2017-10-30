@@ -6,7 +6,18 @@ t0=`date +%FT%H%M%S`;
 DEBUGGING=0
 RETAIN_NUM_LINES=3100
 LOGFILE=backuplog.txt
-#rm -f backup.txt 
+#rm -f backup.txt  
+RETAIN_NUM_LINES=10
+
+function logsetup {  
+    TMP=$(tail -n $RETAIN_NUM_LINES $LOGFILE 2>/dev/null) && echo "${TMP}" > $LOGFILE
+    exec > >(tee -a $LOGFILE)
+    exec 2>&1
+}
+
+function log {  
+    echo "[$(date --rfc-3339=seconds)]: $*"
+}
 
 
 dircheck(){
@@ -65,8 +76,10 @@ prune(){
 	sudo -u $USER borg prune -v --list --keep-within=1d   --keep-daily=7 --keep-weekly=4  --keep-monthly=1 /opt/backups/$SERVER/$SERVER
 }
 backup(){
+LOGFILE=/opt/backups/$SERVER/backuplog.txt 
+logsetup
 
-	dircheck
+	 dircheck
 	startbk 
 	saveall 
 	saveoff
