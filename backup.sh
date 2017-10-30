@@ -3,11 +3,8 @@ SERVER="0"
 USER="minecraft"
 fname=/opt/backup.conf
 t0=`date +%FT%H%M%S`;
-DEBUGGING=0
 RETAIN_NUM_LINES=3100
-LOGFILE=backuplog.txt
-#rm -f backup.txt  
-RETAIN_NUM_LINES=1000
+
 
 function logsetup {  
     TMP=$(tail -n $RETAIN_NUM_LINES $LOGFILE 2>/dev/null) && echo "${TMP}" > $LOGFILE
