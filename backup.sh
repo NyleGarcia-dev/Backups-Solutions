@@ -4,6 +4,11 @@ USER="minecraft"
 fname=/opt/backup.conf
 t0=`date +%FT%H%M%S`;
 RETAIN_NUM_LINES=3100
+BOTNAME=PotatoHook
+DISCORDHOOK=webhooklink
+TOSEND="you have been backed up by a potato"
+
+
 
 
 function logsetup {  
@@ -11,12 +16,47 @@ function logsetup {
     exec > >(tee -a $LOGFILE)
     exec 2>&1
 }
-
 function log {  
     echo "[$(date --rfc-3339=seconds)]: $*"
 }
+webhook(){
+LOGPASTE=$(fpaste $LOGFILE | grep https://paste.fedoraproject.org/ | awk '{print $3}')
 
+curl -X POST \
+  $DISCORDHOOK \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/json' \
+  -H 'postman-token: fd3e4d9a-c59f-d5d4-2e8b-769e3b4ce230' \
+  -d '{
+  "username":"'"$BOTNAME"'",
+  "avatar_url": "https://i.imgur.com/4M34hi2.png",
+  "content":"'"$TOSEND"'",
+ "embeds": [
+    {
+      "author": {
+        "name": "Backup:"
+      },
+	  "title":"'"$SERVER"'",
+      "description": "A backup has been ran on '"$SERVER"' here is a full [log]('"$LOGPASTE"')",
+      "color": 1101584,
+      "fields": [
+        {
+          "name": "Start Time",
+		  "value":"'"$D1"'",
+          "inline": false
+        },
+        {
+          "name": "End Time",
+          "value":"'"$D2"'",
+          "inline": false
+        }
+      ]
+    }
+  ]
+}'
 
+echo " "
+}
 dircheck(){
 
 	if [ -d "/opt/backups/$SERVER" ]; 
@@ -35,6 +75,7 @@ borgint(){
 	t0="Firstrun"
 }
 startbk(){
+	D1=`date`;
   	echo "_+=------------------------------------=+_" 	
 	echo "Starting Backup: " $t0	
 	echo "Sending tmux commands to $SERVER server!"
@@ -44,7 +85,7 @@ endbk(){
 	sudo -u $USER tmux send-keys -t $SERVER "say Server Backup Complete" ENTER
 	echo "Backup Complete: `date`"	
 	echo "_+=------------------------------------=+_"
-
+	D2=`date`;
 }
 saveall(){
 	echo "Sending save-all command to tmux session"
@@ -73,10 +114,11 @@ prune(){
 	sudo -u $USER borg prune -v --list --keep-within=1d   --keep-daily=7 --keep-weekly=4  --keep-monthly=1 /opt/backups/$SERVER/$SERVER
 }
 backup(){
-LOGFILE=/opt/backups/$SERVER/backuplog.txt 
+LOGFILE=/opt/backups/$SERVER/backuplog.txt
+rm -rf $LOGFILE
 logsetup
 
-	 dircheck
+	dircheck
 	startbk 
 	saveall 
 	saveoff
@@ -84,6 +126,7 @@ logsetup
 	saveon
 	prune
 	endbk 
+	webhook
 }
 
 
