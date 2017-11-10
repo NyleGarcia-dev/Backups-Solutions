@@ -5,9 +5,9 @@ fname=/opt/backup.conf
 t0=`date +%FT%H%M%S`;
 RETAIN_NUM_LINES=3100
 BOTNAME=PotatoHook
-DISCORDHOOK=webhooklink
+DISCORDHOOK=link
 TOSEND="you have been backed up by a potato"
-
+NICK="Potato"
 
 
 
@@ -20,7 +20,7 @@ function log {
     echo "[$(date --rfc-3339=seconds)]: $*"
 }
 webhook(){
-LOGPASTE=$(fpaste $LOGFILE | grep https://paste.fedoraproject.org/ | awk '{print $3}')
+LOGPASTE=$(fpaste -n $NICK  $LOGFILE | grep https://paste.fedoraproject.org/ | awk '{print $3}')
 
 curl -X POST \
   $DISCORDHOOK \
@@ -126,6 +126,7 @@ logsetup
 	saveon
 	prune
 	endbk 
+	df -h
 	webhook
 }
 
@@ -179,3 +180,4 @@ fi
 echo "  "
 echo "  "
 echo "  "
+
