@@ -21,8 +21,6 @@ function log {
 }
 webhook(){
 
-LOGPASTE=$(fpaste -n $NICK  $LOGFILE | grep https://paste.fedoraproject.org/ | awk '{print $3}')
-
 curl -X POST \
   $DISCORDHOOK \
   -H 'cache-control: no-cache' \
