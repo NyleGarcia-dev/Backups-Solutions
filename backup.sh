@@ -5,7 +5,7 @@ fname=/opt/backup.conf
 t0=`date +%FT%H%M%S`;
 RETAIN_NUM_LINES=3100
 BOTNAME=PotatoHook
-DISCORDHOOK=link
+DISCORDHOOK=hlink
 TOSEND="you have been backed up by a potato"
 NICK="Potato"
 
@@ -20,42 +20,58 @@ function log {
     echo "[$(date --rfc-3339=seconds)]: $*"
 }
 webhook(){
+
 LOGPASTE=$(fpaste -n $NICK  $LOGFILE | grep https://paste.fedoraproject.org/ | awk '{print $3}')
 
 curl -X POST \
   $DISCORDHOOK \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/json' \
-  -H 'postman-token: fd3e4d9a-c59f-d5d4-2e8b-769e3b4ce230' \
-  -d '{
-  "username":"'"$BOTNAME"'",
-  "avatar_url": "https://i.imgur.com/4M34hi2.png",
-  "content":"'"$TOSEND"'",
- "embeds": [
-    {
-      "author": {
-        "name": "Backup:"
-      },
-	  "title":"'"$SERVER"'",
-      "description": "A backup has been ran on '"$SERVER"' here is a full [log]('"$LOGPASTE"')",
-      "color": 1101584,
-      "fields": [
-        {
-          "name": "Start Time",
-		  "value":"'"$D1"'",
-          "inline": false
-        },
-        {
-          "name": "End Time",
-          "value":"'"$D2"'",
-          "inline": false
-        }
-      ]
-    }
+  -d "$base"
+  
+echo " "
+}
+
+buildbase(){
+base=$(jq -n --arg BOTNAME "$BOTNAME" --arg TOSEND "$TOSEND" --arg SERVER "$SERVER" --arg D1 "$D1" --arg D2 "$D2" '
+{
+  username: $BOTNAME,
+  avatar_url: "https://i.imgur.com/4M34hi2.png",
+  content: $TOSEND,
+  embeds: [
+    
   ]
 }'
 
-echo " "
+)
+echo $base > base.json
+}
+
+addembed(){
+LOGPASTE=$(fpaste -n $NICK  $LOGFILE | grep https://paste.fedoraproject.org/ | awk '{print $3}')
+base=$(jq --arg BOTNAME "$BOTNAME" --arg TOSEND "$TOSEND" --arg SERVER "$SERVER" --arg LOGPASTE "$LOGPASTE" --arg D1 "$D1" --arg D2 "$D2" '.embeds += [
+{
+      author: {
+        name: "Backup:"
+      },
+	  title: $SERVER,
+      description: "A backup has been ran on '"$SERVER"' here is a full [log]('$LOGPASTE')",
+      color: 1101584,
+      fields: [
+        {
+          name: "Start Time",
+		  value: $D1,
+          inline: false
+        },
+        {
+          name: "End Time",
+          value: $D2,
+          inline: false
+        }
+      ]
+    }
+]' ./base.json)
+echo $base > base.json
 }
 dircheck(){
 
@@ -78,11 +94,11 @@ startbk(){
 	D1=`date`;
   	echo "_+=------------------------------------=+_" 	
 	echo "Starting Backup: " $t0	
-	echo "Sending tmux commands to $SERVER server!"
-	sudo -u $USER tmux send-keys -t $SERVER "say Starting Server Backup" ENTER
+#	echo "Sending tmux commands to $SERVER server!"
+#	sudo -u $USER tmux send-keys -t $SERVER "say Starting Server Backup" ENTER
 }
 endbk(){
-	sudo -u $USER tmux send-keys -t $SERVER "say Server Backup Complete" ENTER
+#	sudo -u $USER tmux send-keys -t $SERVER "say Server Backup Complete" ENTER
 	echo "Backup Complete: `date`"	
 	echo "_+=------------------------------------=+_"
 	D2=`date`;
@@ -127,9 +143,9 @@ logsetup
 	prune
 	endbk 
 	df -h
-	webhook
+	addembed
 }
-
+buildbase
 
 while getopts s:u:f: option
 do
@@ -177,6 +193,7 @@ else
 	backup
 	
 fi
+webhook
 echo "  "
 echo "  "
 echo "  "
