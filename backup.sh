@@ -5,7 +5,7 @@ fname=/opt/backup.conf
 t0=`date +%FT%H%M%S`;
 RETAIN_NUM_LINES=3100
 BOTNAME=PotatoHook
-DISCORDHOOK=hlink
+DISCORDHOOK="https://discordapp.com/api/webhooks/380050064397172736/eJR5oPY73Tuoafn-NrRXnou9iPGO1AjFWyGUpOQD22kntCAveTiykj987NQXORewW4-K"
 TOSEND="you have been backed up by a potato"
 NICK="Potato"
 
@@ -21,10 +21,13 @@ function log {
 }
 webhook(){
 
+#LOGPASTE=$(./gist  $LOGFILE)
+
 curl -X POST \
   $DISCORDHOOK \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/json' \
+  -H 'postman-token: fd3e4d9a-c59f-d5d4-2e8b-769e3b4ce230' \
   -d "$base"
   
 echo " "
@@ -42,11 +45,12 @@ base=$(jq -n --arg BOTNAME "$BOTNAME" --arg TOSEND "$TOSEND" --arg SERVER "$SERV
 }'
 
 )
-echo $base > base.json
+echo $base > /opt/base.json
 }
 
 addembed(){
-LOGPASTE=$(fpaste -n $NICK  $LOGFILE | grep https://paste.fedoraproject.org/ | awk '{print $3}')
+#LOGPASTE=$(/opt/backups/scripts/gist $LOGFILE )
+#LOGPASTE=Https://www.google.com
 base=$(jq --arg BOTNAME "$BOTNAME" --arg TOSEND "$TOSEND" --arg SERVER "$SERVER" --arg LOGPASTE "$LOGPASTE" --arg D1 "$D1" --arg D2 "$D2" '.embeds += [
 {
       author: {
@@ -68,16 +72,18 @@ base=$(jq --arg BOTNAME "$BOTNAME" --arg TOSEND "$TOSEND" --arg SERVER "$SERVER"
         }
       ]
     }
-]' ./base.json)
-echo $base > base.json
+]' /opt/base.json)
+echo $base > /opt/base.json
 }
 dircheck(){
 
-	if [ -d "/opt/backups/$SERVER" ]; 
+	if [ -d "/opt/backups/$SERVER/$SERVER" ]; 
 		then
 			echo dir found
 		else 
-			sudo -u $USER mkdir -p /opt/backups/$SERVER/$SERVER
+				
+			mkdir -p /opt/backups/$SERVER/$SERVER
+			chown -R $USER:$USER /opt/backups/$SERVER
 			borgint
 	fi
 
@@ -114,7 +120,7 @@ saveoff(){
 runbackup(){
 	echo "Running backup as user[ $USER ] on server [ $SERVER ] ..."
 	#Making incremental backup using attic
-	sudo -u $USER borg create -v --stats /opt/backups/$SERVER/$SERVER::$t0 /opt/$SERVER 
+	sudo -u $USER borg create -v --stats -C zlib,3 /opt/backups/$SERVER/$SERVER::$t0 /opt/$SERVER 
 
 }
 saveon(){
@@ -125,7 +131,7 @@ prune(){
 	echo "Running prune job to keep space available"
 	# Keep all backups in the last 10 days, 4 additional end of week archives,
 	# and an end of month archive for every month:
-	sudo -u $USER borg prune -v --list --keep-within=1d   --keep-daily=7 --keep-weekly=4  --keep-monthly=1 /opt/backups/$SERVER/$SERVER
+	sudo -u $USER borg prune -v --list --keep-within=5d   --keep-daily=5 --keep-weekly=3  --keep-monthly=5 /opt/backups/$SERVER/$SERVER
 }
 backup(){
 LOGFILE=/opt/backups/$SERVER/backuplog.txt
@@ -135,9 +141,9 @@ logsetup
 	dircheck
 	startbk 
 	saveall 
-	saveoff
+#	saveoff
 	runbackup 
-	saveon
+#	saveon
 	prune
 	endbk 
 	df -h
@@ -195,4 +201,3 @@ webhook
 echo "  "
 echo "  "
 echo "  "
-
