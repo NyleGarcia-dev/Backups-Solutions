@@ -5,7 +5,7 @@ fname=/opt/backup.conf
 t0=`date +%FT%H%M%S`;
 RETAIN_NUM_LINES=3100
 BOTNAME=PotatoHook
-DISCORDHOOK="https://discordapp.com/api/webhooks/380050064397172736/eJR5oPY73Tuoafn-NrRXnou9iPGO1AjFWyGUpOQD22kntCAveTiykj987NQXORewW4-K"
+DISCORDHOOK=""
 TOSEND="you have been backed up by a potato"
 NICK="Potato"
 
@@ -27,7 +27,6 @@ curl -X POST \
   $DISCORDHOOK \
   -H 'cache-control: no-cache' \
   -H 'content-type: application/json' \
-  -H 'postman-token: fd3e4d9a-c59f-d5d4-2e8b-769e3b4ce230' \
   -d "$base"
   
 echo " "
